@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://rockfon0812.github.io/trip",
+  "homepage": "https://rockfon0812.github.io/wander.ai",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
