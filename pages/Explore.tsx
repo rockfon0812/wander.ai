@@ -70,9 +70,10 @@ const Explore: React.FC<ExploreProps> = ({ location, onRequestLocation }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-screen pb-20">
+    // Use 100dvh for proper mobile height, handling bottom nav via padding
+    <div className="flex flex-col h-[100dvh] pb-[80px]">
       {/* Header */}
-      <div className="bg-white px-6 pt-12 pb-4 border-b sticky top-0 z-10">
+      <div className="bg-white px-6 pt-12 pb-4 border-b sticky top-0 z-10 shadow-sm flex-none">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">Explore</h1>
@@ -80,15 +81,16 @@ const Explore: React.FC<ExploreProps> = ({ location, onRequestLocation }) => {
           </div>
           <button 
             onClick={onRequestLocation}
-            className={`p-2 rounded-full ${location ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}
+            className={`p-2 rounded-full transition-colors ${location ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+            title="Update Location"
           >
             <Navigation size={20} className={location ? 'fill-current' : ''} />
           </button>
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+      {/* Chat Area - flex-1 allows it to take remaining space */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-slate-50">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
@@ -108,14 +110,18 @@ const Explore: React.FC<ExploreProps> = ({ location, onRequestLocation }) => {
 
               {/* Map Links / Grounding */}
               {msg.groundingLinks && msg.groundingLinks.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
+                <div className="mt-3 pt-3 border-t border-white/20 flex flex-wrap gap-2">
                   {msg.groundingLinks.map((link, idx) => (
                     <a 
                       key={idx}
                       href={link.uri}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md hover:bg-indigo-100 transition-colors"
+                      className={`inline-flex items-center text-xs font-medium px-2 py-1 rounded-md transition-colors ${
+                        msg.role === 'user' 
+                          ? 'bg-white/20 text-white hover:bg-white/30' 
+                          : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                      }`}
                     >
                       <MapPin size={12} className="mr-1" />
                       {link.title || 'View on Map'}
@@ -127,16 +133,16 @@ const Explore: React.FC<ExploreProps> = ({ location, onRequestLocation }) => {
           </div>
         ))}
         
-        {/* Quick Suggestions for Empty/Start State */}
+        {/* Quick Suggestions */}
         {messages.length === 1 && !isLoading && (
           <div className="grid grid-cols-2 gap-2 px-2 mt-4">
             {SUGGESTIONS.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(suggestion)}
-                className="p-3 text-left bg-white border border-slate-100 rounded-xl shadow-sm hover:border-indigo-200 hover:shadow-md transition-all text-sm text-slate-600 flex items-center"
+                className="p-3 text-left bg-white border border-slate-200 rounded-xl shadow-sm hover:border-indigo-400 hover:shadow-md transition-all text-sm text-slate-600 flex items-center"
               >
-                <Sparkles size={14} className="text-indigo-400 mr-2 flex-shrink-0" />
+                <Sparkles size={14} className="text-indigo-500 mr-2 flex-shrink-0" />
                 {suggestion}
               </button>
             ))}
@@ -154,21 +160,21 @@ const Explore: React.FC<ExploreProps> = ({ location, onRequestLocation }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 bg-white border-t">
-        <div className="relative flex items-center">
+      {/* Input Area - Fixed relative to container */}
+      <div className="p-4 bg-white border-t border-slate-100 flex-none">
+        <div className="relative flex items-center shadow-sm rounded-xl">
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder={location ? "What's nearby?" : "Search for a city..."}
-            className="w-full bg-slate-100 text-slate-800 placeholder-slate-400 pl-4 pr-12 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-slate-50 text-slate-800 placeholder-slate-400 pl-4 pr-12 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 border-none"
           />
           <button 
             onClick={() => handleSend()}
             disabled={!inputValue.trim() || isLoading}
-            className="absolute right-2 p-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+            className="absolute right-2 p-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 hover:bg-indigo-700"
           >
             <Send size={18} />
           </button>

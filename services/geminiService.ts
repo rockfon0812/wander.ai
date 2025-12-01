@@ -120,15 +120,21 @@ export const generateItinerary = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: schema,
-        systemInstruction: "You are an expert travel planner. Create logical, realistic itineraries. Consider opening hours and travel distances."
+        systemInstruction: "You are an expert travel planner. Create logical, realistic itineraries. Consider opening hours and travel distances. Ensure output is pure JSON."
       },
     });
 
     let jsonText = response.text;
     if (!jsonText) throw new Error("No itinerary generated.");
 
-    // Clean Markdown code blocks if present (e.g. ```json ... ```)
-    jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    // Robust JSON cleaning: extract content between first { and last }
+    jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const firstOpen = jsonText.indexOf('{');
+    const lastClose = jsonText.lastIndexOf('}');
+    
+    if (firstOpen !== -1 && lastClose !== -1) {
+      jsonText = jsonText.substring(firstOpen, lastClose + 1);
+    }
 
     const parsed = JSON.parse(jsonText);
     

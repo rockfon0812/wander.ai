@@ -4,9 +4,9 @@ export interface LocationData {
 }
 
 export enum AppRoute {
-  EXPLORE = 'explore',
-  PLAN = 'plan',
-  SAVED = 'saved'
+  EXPLORE = '/',
+  PLAN = '/plan',
+  SAVED = '/saved'
 }
 
 // Data structures for Itinerary Generation

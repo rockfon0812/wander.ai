@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Trash2, ChevronRight, Clock, MapPin } from 'lucide-react';
+import { Calendar, Trash2, ChevronRight, Clock, MapPin, ArrowLeft } from 'lucide-react';
 import { FullItinerary } from '../types';
 
 interface SavedTripsProps {
@@ -12,13 +12,13 @@ const SavedTrips: React.FC<SavedTripsProps> = ({ trips, onDelete }) => {
 
   if (selectedTrip) {
     return (
-      <div className="pb-24 pt-12 bg-slate-50 min-h-screen">
+      <div className="pb-32 pt-12 bg-slate-50 min-h-[100dvh]">
          <div className="px-6 mb-6">
             <button 
               onClick={() => setSelectedTrip(null)}
-              className="text-slate-500 mb-4 hover:text-indigo-600 font-medium text-sm"
+              className="flex items-center text-slate-500 mb-4 hover:text-indigo-600 font-medium text-sm transition-colors"
             >
-              ← Back to Saved
+              <ArrowLeft size={16} className="mr-1" /> Back to Saved
             </button>
             <h1 className="text-3xl font-bold text-slate-800">{selectedTrip.destination}</h1>
             <p className="text-indigo-600 font-medium mt-1">{selectedTrip.duration} Days Trip</p>
@@ -55,7 +55,7 @@ const SavedTrips: React.FC<SavedTripsProps> = ({ trips, onDelete }) => {
   }
 
   return (
-    <div className="px-6 pt-12 pb-24 h-screen overflow-y-auto">
+    <div className="px-6 pt-12 pb-32 min-h-[100dvh]">
       <h1 className="text-3xl font-bold text-slate-800 mb-2">Saved Trips</h1>
       <p className="text-slate-500 mb-8">Your bucket list and upcoming adventures.</p>
 
@@ -70,10 +70,11 @@ const SavedTrips: React.FC<SavedTripsProps> = ({ trips, onDelete }) => {
           {trips.map((trip) => (
             <div 
               key={trip.id} 
-              className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden group cursor-pointer"
+              onClick={() => setSelectedTrip(trip)}
             >
               <div className="flex justify-between items-start">
-                <div onClick={() => setSelectedTrip(trip)} className="cursor-pointer flex-1">
+                <div className="flex-1">
                   <h3 className="text-xl font-bold text-slate-800">{trip.destination}</h3>
                   <div className="flex items-center text-slate-500 text-sm mt-1">
                     <Calendar size={14} className="mr-1" />
@@ -88,7 +89,8 @@ const SavedTrips: React.FC<SavedTripsProps> = ({ trips, onDelete }) => {
                 
                 <button 
                   onClick={(e) => { e.stopPropagation(); onDelete(trip.id); }}
-                  className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors z-10"
+                  title="Delete trip"
                 >
                   <Trash2 size={18} />
                 </button>

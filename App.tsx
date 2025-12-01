@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Explore from './pages/Explore';
 import ItineraryPlanner from './pages/ItineraryPlanner';
@@ -7,9 +7,12 @@ import SavedTrips from './pages/SavedTrips';
 import { AppRoute, FullItinerary, LocationData } from './types';
 
 function App() {
-  const [currentRoute, setCurrentRoute] = useState<AppRoute>(AppRoute.EXPLORE);
   const [savedTrips, setSavedTrips] = useState<FullItinerary[]>([]);
   const [location, setLocation] = useState<LocationData | null>(null);
+
+  useEffect(() => {
+    console.log("WanderAI App Mounted - Version: v1.1.0");
+  }, []);
 
   // Load saved trips from LocalStorage on mount
   useEffect(() => {
@@ -30,7 +33,6 @@ function App() {
 
   const handleSaveTrip = (trip: FullItinerary) => {
     setSavedTrips(prev => [trip, ...prev]);
-    setCurrentRoute(AppRoute.SAVED);
   };
 
   const handleDeleteTrip = (id: string) => {
@@ -58,37 +60,15 @@ function App() {
     }
   };
 
-  const renderContent = () => {
-    switch (currentRoute) {
-      case AppRoute.EXPLORE:
-        return (
-          <Explore 
-            location={location} 
-            onRequestLocation={requestLocation} 
-          />
-        );
-      case AppRoute.PLAN:
-        return (
-          <ItineraryPlanner 
-            onSave={handleSaveTrip} 
-          />
-        );
-      case AppRoute.SAVED:
-        return (
-          <SavedTrips 
-            trips={savedTrips} 
-            onDelete={handleDeleteTrip} 
-          />
-        );
-      default:
-        return <Explore location={location} onRequestLocation={requestLocation} />;
-    }
-  };
-
   return (
     <HashRouter>
-      <Layout activeRoute={currentRoute} onNavigate={setCurrentRoute}>
-        {renderContent()}
+      <Layout>
+        <Routes>
+          <Route path={AppRoute.EXPLORE} element={<Explore location={location} onRequestLocation={requestLocation} />} />
+          <Route path={AppRoute.PLAN} element={<ItineraryPlanner onSave={handleSaveTrip} />} />
+          <Route path={AppRoute.SAVED} element={<SavedTrips trips={savedTrips} onDelete={handleDeleteTrip} />} />
+          <Route path="*" element={<Navigate to={AppRoute.EXPLORE} replace />} />
+        </Routes>
       </Layout>
     </HashRouter>
   );

@@ -1,13 +1,12 @@
 import React from 'react';
 import { MapPin, Calendar, Heart } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AppRoute } from '../types';
 
-interface BottomNavProps {
-  activeRoute: AppRoute;
-  onNavigate: (route: AppRoute) => void;
-}
+const BottomNav: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-const BottomNav: React.FC<BottomNavProps> = ({ activeRoute, onNavigate }) => {
   const navItems = [
     { id: AppRoute.EXPLORE, icon: MapPin, label: 'Explore' },
     { id: AppRoute.PLAN, icon: Calendar, label: 'Plan Trip' },
@@ -19,11 +18,11 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeRoute, onNavigate }) => {
       {/* Changed max-w-md to max-w-2xl to match Layout */}
       <div className="flex justify-between items-center max-w-2xl mx-auto">
         {navItems.map((item) => {
-          const isActive = activeRoute === item.id;
+          const isActive = location.pathname === item.id;
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => navigate(item.id)}
               className={`flex flex-col items-center space-y-1 py-2 px-4 rounded-xl transition-all duration-200 ${
                 isActive 
                   ? 'text-indigo-600 bg-indigo-50' 
